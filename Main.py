@@ -8,13 +8,12 @@ import Move
 
 top = Tk();
 top.geometry('%dx%d' % (SizeX*100, SizeY*100)
-
-Init(mat)
+mat = Init()
 
 Print(top,mat)
 
-top.bind('Up', MoveUp)
-top.bind('Down', MoveDown)
-top.bind('Left', MoveLeft)
-top.bind('Right',MoveRight)
+top.bind('Up', MoveUp(mat))
+top.bind('Down', MoveDown(mat))
+top.bind('Left', MoveLeft(mat))
+top.bind('Right',MoveRight(mat))
 
