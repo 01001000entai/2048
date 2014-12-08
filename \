@@ -1,5 +1,4 @@
 from Tkinter import *
-from SimpleDialog import *
 import random
 
 #img = [[PhotoImage(file='./icon/block_%d.gif' % mat[x][y].val) for x in range(SizeX)] for y in range(SizeY)]
@@ -22,19 +21,18 @@ import random
 class _2048(Tk):
 	def __init__(self,SizeX,SizeY):
 		Tk.__init__(self)
-		self.wm_title("2048")
 		self.SizeX = SizeX
 		self.SizeY = SizeY
 		self.point = 0
 		self.IsGameOver = False
-		self.now_dif = 1
+
 		self.bind('<Key-Left>', self.MoveLeft)
 		self.bind('<Key-Right>', self.MoveRight)
 		self.bind('<Key-Up>', self.MoveUp)
 		self.bind('<Key-Down>', self.MoveDown)
 
 
-		self.geometry('%dx%d' % ((self.SizeX+0.1)*100, (self.SizeY+1)*100))
+		self.geometry('%dx%d' % ((self.SizeX+1)*100, (self.SizeY+1)*100))
 		
 		
 		self.difct = IntVar()
@@ -42,31 +40,24 @@ class _2048(Tk):
 		R1 = Radiobutton(self, text="Easy", variable=self.difct, value=1)
 		R2 = Radiobutton(self, text="Normal", variable=self.difct, value=2)
 		R3 = Radiobutton(self, text="Hard", variable=self.difct, value=3)
+		
 		R1.grid(row=SizeY, column=0)
 		R2.grid(row=SizeY, column=1)
 		R3.grid(row=SizeY, column=2) 
 		
-		self.P1 = Label(self, text=self.point, bg="blue", fg ="red", font = 50, width = 16,height = 2)
-		self.P1.grid(row=SizeY+1,column=0, columnspan=2)
+		P1 = Label(self, text=str(self.point), bg="blue", fg ="red", font = 20)
+		P1.grid(row=SizeY+1,column=0)
 
-		B1 = Button(self, text="Restart", bg="green", fg="red",font = 30,width = 8,height = 2,command=self.start)
-		B1.grid(row=SizeY+1,column=2)
-		B2 = Button(self, text="Exit", bg="yellow", fg="red",font = 30,width = 8,height = 2,command=exit)
-		B2.grid(row=SizeY+1,column=3)
+		
 
 		self.start()
 	def start(self):
-		self.IsGameOver = False
-		self.now_dif = self.difct.get()
-		self.point = 0
 		self.mat = [[0 for y in range(self.SizeY)] for x in range(self.SizeX)]
 		self.gif = [[PhotoImage(file='./icon/block_%d.gif' % self.mat[x][y]) for x in range(self.SizeX)] for y in range(self.SizeY)]
 		self.RandomCreate()
 		self.Print()
 
 	def MoveUp(self,e):
-		if self.IsGameOver:
-			return
 		print "Up"
 		for x in range(self.SizeX):
 			for y in range(self.SizeY):
@@ -76,19 +67,15 @@ class _2048(Tk):
 					tx += -1
 		[rest, maxval] = self.Count()
 		if rest == 0:
-			self.Gameover()
-			return 
+			exit()
 		#
 		if maxval == 2048:
-			self.Gameover()
-			return 
+			exit()
 		#
 		self.RandomCreate()
 		self.Print()
 
 	def MoveDown(self,e):
-		if self.IsGameOver:
-			return
 		print "Down"
 		for x in range(self.SizeX-1,-1,-1):
 			for y in range(self.SizeY):
@@ -98,19 +85,15 @@ class _2048(Tk):
 					tx += +1
 		[rest, maxval] = self.Count()
 		if rest == 0:
-			self.Gameover()
-			return 
+			exit()
 		#
 		if maxval == 2048:
-			self.Gameover()
-			return 
+			exit()
 		#
 		self.RandomCreate()
 		self.Print()
 
 	def MoveLeft(self,e):
-		if self.IsGameOver:
-			return
 		print "Left"
 		for x in range(self.SizeX):
 			for y in range(self.SizeY):
@@ -120,19 +103,15 @@ class _2048(Tk):
 					ty += -1
 		[rest, maxval] = self.Count()
 		if rest == 0:
-			self.Gameover()
-			return 
+			exit()
 		#
 		if maxval == 2048:
-			self.Gameover()
-			return 
+			exit()
 		#
 		self.RandomCreate()
 		self.Print()
 
 	def MoveRight(self,e):
-		if self.IsGameOver:
-			return
 		print "Right"
 		for x in range(self.SizeX):
 			for y in range(self.SizeY-1,-1,-1):
@@ -142,22 +121,17 @@ class _2048(Tk):
 					ty += +1
 		[rest, maxval] = self.Count()
 		if rest == 0:
-			self.Gameover()
-			return 
+			exit()
 		#
 		if maxval == 2048:
-			self.Gameover()
-			return 
+			exit()
 		#
 		self.RandomCreate()
 		self.Print()
 
 	def RandomCreate(self):
-		for i in range(self.now_dif):
+		for i in range(self.difct.get()):
 			[rest, maxval] = self.Count()
-			if (rest == 0):
-				self.Gameover()
-				return 
 			t = random.randint(0,rest-1)
 			for x in range(self.SizeX):
 				for y in range(self.SizeY):
@@ -181,12 +155,6 @@ class _2048(Tk):
 					MaxVal = self.mat[x][y]
 		return  [NumofNonzero, MaxVal]
 
-	def Gameover(self):
-		DIF = ["","easy","normal","hard"]
-		Message = SimpleDialog(self, text="You get %d points in %s mode, good job!" % (self.point, DIF[self.now_dif]), buttons= ["Yes"])
-		Message.go()
-		self.IsGameOver = True
-		return 
 	def Print(self):
 	#clear
 		for x in range(self.SizeX):
@@ -202,7 +170,7 @@ class _2048(Tk):
 				Label(self, image=self.gif[x][y]).grid(row=y, column=x)
 		for x in range(self.SizeX):
 			print self.mat[x]
-		self.P1.config(text=str(self.point))
+
 	def Move(self,x,y,dx,dy):
 		if self.mat[x][y] == 0:
 			return 0
