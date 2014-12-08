@@ -26,10 +26,28 @@ class _2048(Tk):
 
 		self.IsGameOver = False
 
+		self.bind('<Key-Left>', self.MoveLeft)
+		self.bind('<Key-Right>', self.MoveRight)
+		self.bind('<Key-Up>', self.MoveUp)
+		self.bind('<Key-Down>', self.MoveDown)
+
 
 		self.geometry('%dx%d' % ((self.SizeX+1)*100, (self.SizeY+1)*100))
-		self.mat = [[0 for y in range(SizeY)] for x in range(SizeX)]
-		self.gif = [[PhotoImage(file='./icon/block_%d.gif' % self.mat[x][y]) for x in range(SizeX)] for y in range(SizeY)]
+		
+		
+		self.difct = IntVar()
+		self.difct.set(1)
+		R1 = Radiobutton(self, text="Easy", variable=self.difct, value=1)
+		R2 = Radiobutton(self, text="Normal", variable=self.difct, value=2)
+		R3 = Radiobutton(self, text="Hard", variable=self.difct, value=3)
+		
+		R1.grid(row=SizeY, column=0)
+		R2.grid(row=SizeY, column=1)
+		R3.grid(row=SizeY, column=3) 
+		self.start()
+	def start(self):
+		self.mat = [[0 for y in range(self.SizeY)] for x in range(self.SizeX)]
+		self.gif = [[PhotoImage(file='./icon/block_%d.gif' % self.mat[x][y]) for x in range(self.SizeX)] for y in range(self.SizeY)]
 		self.RandomCreate()
 		self.Print()
 
@@ -98,17 +116,18 @@ class _2048(Tk):
 		self.Print()
 
 	def RandomCreate(self):
-		[rest, maxval] = self.Count()
-		t = random.randint(0,rest-1)
-		for x in range(self.SizeX):
-			for y in range(self.SizeY):
-				if t < 0:	
-					break
-				elif t > 0: 	
-					t -= 1
-				else:		
-					self.mat[x][y] = random.randint(0,1)*2+2
-					t -= 1
+		for i in range(self.difct):
+			[rest, maxval] = self.Count()
+			t = random.randint(0,rest-1)
+			for x in range(self.SizeX):
+				for y in range(self.SizeY):
+					if t < 0:	
+						break
+					elif t > 0: 	
+						t -= 1
+					else:		
+						self.mat[x][y] = random.randint(0,1)*2+2
+						t -= 1
 
 	def Count(self):
 		NumofNonzero = 0
